@@ -1,0 +1,108 @@
+<div class="modal fade" tabindex="-1" id="contatbest" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="title-contatbest">Login Conta Tbest</h4>
+            </div>
+            <div class="modal-body">
+                <form action="#" method="post" enctype="multipart/form-data" class="form-horizontal">
+                    <div class="form-group required">
+                        <label class="col-sm-4 control-label" for="input-logintbest">Login</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="logintbest" value="" placeholder="" id="input-logintbest" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label class="col-sm-4 control-label" for="input-senhatbest">Senha</label>
+                        <div class="col-sm-8">
+                            <input type="password" name="senhatbest" value="" placeholder="" id="input-senhatbest" class="form-control" />
+                            <a href="javascript:;" class="mostrasenha" onclick="mostrasenha();" style="font-size: 11px;">Mostrar Senha</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="fechaModalTbest();" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="trazerdados" onclick="trazerDadosTbest();" class="btn btn-primary">Trazer Dados</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="test" class="overlay" style="display:none;"></div>
+<div class="modal fade" tabindex="-1" id="modalcart" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary pull-left" onclick="fechaModalCart();" data-dismiss="modal">Continuar Comprando</button>
+                <a href="/index.php?route=checkout/checkout" id="finalizarcompra" class="btn btn-success btn-inverse">Finalizar Compra</a>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+  <div class="container">
+    <div class="row">
+      {% if informations %}
+      <div class="col-sm-3">
+        <h5>{{ text_information }}</h5>
+        <ul class="list-unstyled">
+         {% for information in informations %}
+          <li><a href="{{ information.href }}">{{ information.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="col-sm-3">
+        <h5>{{ text_service }}</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
+          <li><a href="{{ return }}">{{ text_return }}</a></li>
+          <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h5>{{ text_extra }}</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
+          <li><a href="{{ voucher }}">{{ text_voucher }}</a></li>
+          <li><a href="{{ special }}">{{ text_special }}</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h5>{{ text_account }}</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ account }}">{{ text_account }}</a></li>
+          <li><a href="{{ order }}">{{ text_order }}</a></li>
+          <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
+          <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <p>{{ powered }}</p>
+  </div>
+</footer>
+{% for script in scripts %}
+<script src="{{ script }}" type="text/javascript"></script>
+{% endfor %}
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/5d83fd4d9f6b7a4457e29c58/default';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+<!--
+OpenCart is open source software and you are free to remove the powered by OpenCart if you want, but its generally accepted practise to make a small donation.
+Please donate via PayPal to donate@opencart.com
+//-->
+</body></html>

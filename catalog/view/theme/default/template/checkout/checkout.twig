@@ -1,0 +1,349 @@
+{{ header }}
+<div id="checkout-checkout" class="container">
+    <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+            <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+    </ul>
+    {% if error_warning %}
+        <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    {% endif %}
+    <div class="row">
+        {{ column_left }}
+        {% if column_left and column_right %}
+        {% set class = 'col-sm-6' %}
+        {% elseif column_left or column_right %}
+        {% set class = 'col-sm-9' %}
+        {% else %}
+        {% set class = 'col-sm-12' %}
+        {% endif %}
+        <div id="content" class="{{ class }}">
+            {{ content_top }}
+            {% if errorasaas %}
+                <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> 
+                    {{ errorasaas }}
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="box">
+                        <h5>Cliente</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item"><b>Nome:</b> {{ customer_info.firstname }}</li>
+                            <li class="list-group-item"><b>E-mail:</b> {{ customer_info.email }}</li>
+                            <li class="list-group-item"><b>Login Tbest:</b> {{ customer_info.logintbest }}</li>
+                            <li class="list-group-item"><b>CPF:</b> {{ customer_info.cpf }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="box">
+                        <h5>Endereço <a href="#" id="alterAddress" class="btn btn-primary btn-inverse" role="button">Editar</a></h5>
+                        <ul class="list-group">
+                            <li class="list-group-item" id="addressCep" ><b>CEP:</b> {{ address.postcode }}</li>
+                            <li class="list-group-item" id="addressRua" ><b>Rua:</b> {{ address.address_1 }} {{ address.address_2 }}</li>
+                            <li class="list-group-item" id="addressBairro" ><b>Bairro:</b> {{ address.company }}</li>
+                            <li class="list-group-item" id="addressCidade" ><b>Cidade-Estado:</b> {{ address.city }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="box">
+                        <h5>Produto</h5>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor Uni</th>
+                                    <th class="text-right">Valor Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.quantity }}</td>
+                                        <td>{{ product.price }}</td>
+                                        <td class="text-right">{{ product.total }}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th>Total</th>
+                                    <td colspan=3 class="text-right">{{ totalGeral }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="box">
+                        <h5>Pagamento</h5>
+                        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal" id="formPagamento">
+                            <input id="valortotalcheckout" type="hidden" value="{{ totalcart }}" />
+                            <span class="alert alert-success">Para retirar: Consultar Informações!</span>
+                            <hr />
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="frete" id="frete1" value="option1">
+                                    Retirar no Local
+                                </label>
+                                <label style="margin-left:10px;">
+                                    <input type="radio" name="frete" id="frete2" value="option2" checked >
+                                    Frete Fixo R$ 35,00
+                                </label>
+                            </div>
+                            <hr/>
+                            <div class="form-group">
+                                <label for="parcelas" class="col-sm-2 control-label">Parcelas</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="parcelas" name="parcela">
+                                        {% for parcela in parcelas %}
+                                            {% if parcela.parcela == "1" %}
+                                                <option value="{{ parcela.parcela }}">{{ parcela.parcela }} X - {{ parcela.valor }} Sem Juros</option>
+                                            {% else %}
+                                                <option value="{{ parcela.parcela }}">{{ parcela.parcela }} X - {{ parcela.valor }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <a href="{{ continue }}" class="btn btn-default btn-inverse">{{ button_shopping }}</a>
+                            <button type="submit" class="btn btn-default btn-inverse pull-right">Processar Pagamento</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="addresslist" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="title-contatbest">Escolha Endereço</h4>
+            </div>
+            <div class="modal-body">
+                <select class="form-control" id="listAddress">
+                    <option value="0">Selecione um Endereço</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ linkAddress }}" class="btn btn-inverse" role="button" >Cadastrar Novo Endereço</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="visualizarBoletoModal" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="pegarTamanho">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="title-contatbest">Visualizar Boleto</h4>
+            </div>
+            <div class="modal-body" style="margin-bottom: 30px;">
+                <iframe src="" width="97%" height="720px" id="iframeBoleto" title="Boleto Tbest"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="visualizarPixModal" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="tamanhoPix">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="title-contatbest">Visualizar Qr Code</h4>
+            </div>
+            <div class="modal-body" style="margin-bottom: 30px;">
+                <div title="Qr Code Pix" style="text-align: center;">
+                    <img id="visualizarQrCode" src"" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="finalizarPagamento" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="title-contatbest">Finalizar Pagamento</h4>
+            </div>
+            <div class="modal-body modalMostrar" style="display:none;">
+                <div class="form-group text-center mostrarBotao" style="display:none;" >
+                    <a href="" id="visualizarBoleto" class="btn btn-inverse" target="_blank" role="button" >Visualizar o Boleto</a>
+                </div>
+                <div class="alert alert-success alert-dismissible" id="mensagemSucesso" style="display:none;">
+                    <i class="fa fa-exclamation-circle"></i> 
+                    <span class="mensagemSucesso"></span>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body modalEsconde" style="margin-bottom: 30px;">
+                <form>
+                    <label class="radio-inline">
+                        <input type="radio" name="opcaopagamento" class="opcaoPagamento" id="opcaoPagamento1" value="cc"> Cartão Crédito
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="opcaopagamento" class="opcaoPagamento" id="opcaoPagamento2" value="bol"> Boleto
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="opcaopagamento" class="opcaoPagamento" id="opcaoPagamento3" value="pix"> Pix
+                    </label>
+                </form>
+                <hr />
+                <div class="alert alert-danger alert-dismissible" id="mensagemError" style="display:none;">
+                    <i class="fa fa-exclamation-circle"></i> 
+                    <span class="mensagemErro"></span>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
+                <form method="post" enctype="multipart/form-data" class="form-horizontal" style="padding: 10px; display:none;" id="formFinalizarPagamentoBoleto">
+                    <div class="form-group">
+                        <label for="nome" class="control-label">Nome</label>
+                        <input type="text" name="nome" disabled class="form-control" id="nome" value="{{ customer_info.firstname }}" placeholder="Informe seu Nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf" class="control-label">CPF</label>
+                        <input type="text" name="cpf" disabled class="form-control" id="cpf" value="{{ customer_info.cpf }}" placeholder="Informe seu Cpf">
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" id="buttonBoleto" class="btn btn-inverse" role="button" >Gerar Boleto</button>
+                    </div>
+                </form>
+                <form method="post" enctype="multipart/form-data" class="form-horizontal" style="padding: 10px; display:none;" id="formFinalizarPagamentoPix">
+                    <div class="form-group text-center">
+                        <button type="submit" id="buttonGerarQrCode" class="btn btn-inverse" role="button" >Gerar QrCode</button>
+                    </div>
+                </form>
+                <form method="post" enctype="multipart/form-data" class="form-horizontal" style="padding: 10px; display:none;" id="formFinalizarPagamento">
+                    <div class="form-group">
+                        <label for="numerocartao" class="control-label">Número Cartão</label>
+                        <input type="tel" name="cardnumber" inputmode="numeric" pattern="[0-9\s]{13,19}" maxlength="19" autocomplete="cc-number" class="form-control" id="numerocartao" placeholder="xxxx xxxx xxxx xxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="vencimentoCartao" class="control-label">Vencimento</label>
+                        <input type="text" name="vencimentoCartao" class="form-control" id="vencimentoCartao" placeholder="xx/xxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="ccv" class="control-label">Codigo Verificador</label>
+                        <input type="text" name="ccv" id="ccv" class="form-control" placeholder="xxx">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input name="titular" id="titular" type="checkbox"> Não sou o Titular do Cartão
+                        </label>
+                    </div>
+                    <div class="naodonocartao" style="display:none;">
+                        <div class="form-group">
+                            <label for="nome-cartao" class="control-label">Nome</label>
+                            <input type="text" name="nome-cartao" class="form-control" id="nome-cartao" placeholder="Informe seu Nome">
+                        </div>
+                        <div class="form-group">
+                            <label for="cpf-cartao" class="control-label">CPF</label>
+                            <input type="text" name="cpf-cartao" class="form-control" id="cpf-cartao" placeholder="Informe seu Cpf">
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" id="buttonCartao" class="btn btn-inverse" role="button" >Processar Pagamento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ footer }}
+<script type="text/javascript">
+    $("#numerocartao").mask("0000 0000 0000 0000");
+    $("#vencimentoCartao").mask("00/0000");
+    $('#alterAddress').on('click', function(){
+        $.ajax({
+            url: 'index.php?route=account/address/getAddressJson',
+            type: 'get',
+            crossDomain: true,
+            dataType: 'json',
+            success: function(json) {
+                json.forEach((element, index, array)=>{
+                    $('#listAddress').append('<option value="'+element.address_id+'">'+element.address+'</option>');
+                });
+                $('#addresslist').modal('show');
+            }
+        });
+        return false;
+    });
+    $('#listAddress').on('change', function(){
+        var idAddress = $('#listAddress').val();
+        $.ajax({
+            url: 'index.php?route=account/address/alterAddressMain',
+            type: 'POST',
+            data: {
+                address_id: idAddress
+            },
+            dataType: 'json',
+            success: function(json) {
+                $('#addressCep').html('<b>CEP:</b> '+json.postcode);
+                $('#addressRua').html('<b>Rua:</b> '+json.address_1 +' '+json.address_2);
+                $('#addressBairro').html('<b>Bairro:</b> '+json.company);
+                $('#addressCidade').html('<b>Cidade-Estado:</b> '+json.city);
+                $('#addresslist').modal('hide');
+            }
+        });
+        return false;
+    });
+
+    $('.radio input').on('click', function(){
+        var frete = $("input[name='frete']:checked").val();
+        $.ajax({
+            url: 'index.php?route=checkout/checkout/getParcelasFrete',
+            type: 'POST',
+            data: {
+                optionFrete: frete
+            },
+            dataType: 'json',
+            success: function(json) {
+                $('#parcelas').html('');
+                json.parcelas.forEach((element, index, array)=>{
+                    if(element.parcela == "1"){
+                        $('#parcelas').append('<option value="'+element.parcela+'">'+ element.parcela +'X - '+ element.valor +' Sem Juros</option>');
+                    }else{
+                        $('#parcelas').append('<option value="'+element.parcela+'">'+ element.parcela +'X - '+ element.valor +'</option>');
+                    }
+                });
+                if(frete == ""){
+                    
+                }
+            }
+        });
+    });
+
+    $('#parcelas').on('change', function(){
+        var parcela = $('#parcelas').val();
+        var valortotal = $('#valortotalcheckout').val();
+        var texto = "";
+        if(valortotal > 100){
+            if(parcela > 1)
+            {
+                texto = "Pagamento via Cartão - preencher os dados do cartão na proxima tela";
+            }else{
+                console.log('entrou aqui');
+                texto = "Pagamento via Boleto ou Cartão de Crédito a Vista";
+            }
+        }else{
+            texto = "Pagamento via Cartão - preencher os dados do cartão na proxima tela";
+        }
+
+        $('#alertMetodo').html(texto);
+    })
+
+    $('#formPagamento').on('submit', function(){
+        $('#finalizarPagamento').modal('show');
+        return false;
+    })
+
+    $('#frete2').trigger('click');
+</script>

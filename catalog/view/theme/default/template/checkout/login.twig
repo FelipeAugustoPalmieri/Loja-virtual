@@ -1,0 +1,122 @@
+{{ header }}
+<div id="checkout-login" class="container">
+    <div class="row">{{ column_left }}
+        {% if column_left and column_right %}
+        {% set class = 'col-sm-6' %}
+        {% elseif column_left or column_right %}
+        {% set class = 'col-sm-9' %}
+        {% else %}
+        {% set class = 'col-sm-12' %}
+        {% endif %}
+        <div id="content" class="{{ class }}">
+            <div class="row">
+                <!--<div class="col-sm-6">
+                    <h2>{{ text_new_customer }}</h2>
+                    <p>{{ text_checkout }}</p>
+                    <div class="radio">
+                        <label> 
+                            {% if account == 'register' %}
+                                <input type="radio" name="account" value="register" checked="checked" />
+                            {% else %}
+                                <input type="radio" name="account" value="register" />
+                            {% endif %}
+                            {{ text_register }}
+                        </label>
+                    </div>
+                    {% if checkout_guest %}
+                        <div class="radio">
+                            <label> 
+                                {% if account == 'guest' %}
+                                    <input type="radio" name="account" value="guest" checked="checked" />
+                                {% else %}
+                                    <input type="radio" name="account" value="guest" />
+                                {% endif %}
+                                {{ text_guest }}
+                            </label>
+                        </div>
+                    {% endif %}
+                    <p>{{ text_register_account }}</p>
+                    <input type="button" value="{{ button_continue }}" id="button-account" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+                    <button type="button" onclick="abrirModalTbest();" class="btn btn-warning contatbest">Usar Conta Tbest</button>
+                </div>-->
+                <div class="col-sm-3">
+                </div>
+                <div class="col-sm-6">
+                    <h2>{{ text_returning_customer }}</h2>
+                    <p>{{ text_i_am_returning_customer }}</p>
+                    <div class="form-group">
+                        <label class="control-label" for="input-email">{{ entry_email }}</label>
+                        <input type="text" name="email" value="" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="input-password">{{ entry_password }}</label>
+                        <input type="password" name="password" value="" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
+                        <a href="{{ forgotten }}">{{ text_forgotten }}</a>
+                    </div>
+                    <a href="{{ linkcadastro }}" class="btn btn-inverse" style="float: left;" >Cadastra - se</a>
+                    <input type="button" value="{{ button_login }}" id="button-login" style="float: right;" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+                </div>
+                <div class="col-sm-3">
+                </div>
+            </div>
+        </div>
+    </div>
+<div>
+
+<script type="text/javascript"><!--
+    function preencherFormularioRegistro(json){
+        $.ajax({
+            url: 'index.php?route=account/register/cadastrarusertbest',
+            method: 'post',
+            data: { login: $('#input-logintbest').val(), senha: $('#input-senhatbest').val() },
+            crossDomain: true,
+            dataType: 'json',
+            success: function(json) {
+                abashipping();
+                $('#contatbest').modal('hide');
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                var html = '<div class="text-danger">Algo incorreto aconteceu</div>';
+                $('#input-logintbest').parent().find('.text-danger').remove();
+                $('#input-logintbest').parent().append(html);
+                $.unblockUI();
+                $('#contatbest').modal('show');
+                //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    $(document).delegate('#button-login', 'click', function() {
+        $.ajax({
+            url: 'index.php?route=checkout/login/save',
+            type: 'post',
+            data: $('#checkout-login :input'),
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-login').button('loading');
+            },
+            complete: function() {
+                $('#button-login').button('reset');
+            },
+            success: function(json) {
+                $('.alert-dismissible, .text-danger').remove();
+                $('.form-group').removeClass('has-error');
+
+                if (json['redirect']) {
+                    location = json['redirect'];
+                } else if (json['error']) {
+                    $('#checkout-login .panel-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                    // Highlight any found errors
+                    $('input[name=\'email\']').parent().addClass('has-error');
+                    $('input[name=\'password\']').parent().addClass('has-error');
+            }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    });
+
+//--></script> 
+{{ footer }}

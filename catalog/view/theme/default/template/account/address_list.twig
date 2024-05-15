@@ -1,0 +1,135 @@
+{{ header }}
+<div id="account-address" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if success %}
+  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+  {% endif %}
+  {% if error_warning %}
+  <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h2>{{ text_address_book }}</h2>
+      {% if addresses %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          {% for result in addresses %}
+          <tr>
+            <td class="text-left">{{ result.address }}</td>
+            <td class="text-right"><a href="{{ result.update }}" class="btn btn-info">{{ button_edit }}</a> &nbsp; <a href="{{ result.delete }}" class="btn btn-danger">{{ button_delete }}</a></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% else %}
+      <p>{{ text_empty }}</p>
+      {% endif %}
+      <div class="buttons clearfix">
+          <div class="pull-left"><a href="{{ back }}" class="btn btn-default">{{ button_back }}</a></div>
+          <div class="pull-right"><a href="{{ add }}" class="btn btn-primary">{{ button_new_address }}</a></div>
+          <div class="pull-right"><a href="#" id="getAddress" style="margin-right: 10px;" class="btn btn-primary">{{ button_get_address_tbest }}</a></div>
+      </div>
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+
+    <div class="modal fade" tabindex="-1" id="addresslist" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="title-contatbest">Esse Endereço Mesmo?</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="cancelAddress" data-dismiss="modal">Não</button>
+                    <button type="button" id="addresscadastro" class="btn btn-primary">Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ footer }}
+<script type="text/javascript">
+  $('#getAddress').on('click', function(){
+      $.blockUI({ 
+          message: '<h1><img width="100" src="/image/catalog/carregando.gif" /></h1>',
+          css: { background: 'none', border: 'none'}
+      });
+      $.ajax({
+            url: 'index.php?route=account/address/consultaaddresstbest',
+            type: 'get',
+            crossDomain: true,
+            dataType: 'json',
+            success: function(json) {
+                $.unblockUI();
+                if(!json.cod){
+                    $('#addresslist').modal('show');
+                    var html = "<b>Rua:</b> "+json.legalperson.address+"<br/>";
+                    html += "<b>Complemento:</b> "+json.legalperson.address_complement+"<br/>";
+                    html += "<b>Bairro:</b> "+json.legalperson.district+"<br/>";
+                    html += "<b>Cidade:</b> "+json.city.name;
+                    $('#addresslist .modal-dialog').removeClass("modal-sm").addClass("modal-md");
+                    $('#addresslist .modal-body').css("font-size","16px");
+                    $('#addresslist .modal-body').html(html);
+                    $('#addresscadastro').attr('onclick', 'addresscadastro(false);');
+                }else{
+                    $('#addresslist').modal('show');
+                    var html = "<h4>"+json.error+"</h4>";
+                    $('#addresslist .modal-body').html(html);
+                    $('#cancelAddress').text("Cancelar");
+                    $('#addresscadastro').text("Cadastrar Agora ?");
+                    $('#addresscadastro').attr('onclick', 'addresscadastro(true);');
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                $.unblockUI();
+                var html = '<div class="text-danger">Login ou Senha incorretos</div>';
+                $('#input-logintbest').parent().find('.text-danger').remove();
+                $('#input-logintbest').parent().append(html);
+                //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    });
+
+    function addresscadastro(redirect){
+        if(redirect){
+            window.location = "https://loja.tbest.com.br/index.php?route=account/edit";
+        }else{
+            $('#addresslist').modal('hide');
+            $.blockUI({ 
+                message: '<h1><img width="100" src="/image/catalog/carregando.gif" /></h1>',
+                css: { background: 'none', border: 'none'}
+            });
+            $.ajax({
+                url: 'index.php?route=account/address/cadastroajax',
+                type: 'get',
+                crossDomain: true,
+                dataType: 'json',
+                success: function(json) {
+                    $.unblockUI();
+                    location = "http://lojagrupoonix.wms/index.php?route=account/address";
+                    //return false;
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    $.unblockUI();
+                    var html = '<div class="text-danger">Login ou Senha incorretos</div>';
+                    $('#input-logintbest').parent().find('.text-danger').remove();
+                    $('#input-logintbest').parent().append(html);
+                    //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+        }
+    }
+</script>
