@@ -17,6 +17,6 @@ if (!defined('DIR_APPLICATION')) {
 }
 
 // Startup
-require_once(__DIR__ . 'system/startup.php');
+require_once('system/startup.php');
 
 start('catalog');

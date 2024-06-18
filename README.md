@@ -29,9 +29,7 @@ Este é um projeto de loja virtual desenvolvido em PHP com banco de dados MySQL.
 4. Renomeie o arquivo `.htaccess.txt` para `.htaccess`.
 5. Configure as credenciais do banco de dados no arquivo de configuração.
 
-## Uso
 
-Descreva como usar seu projeto, incluindo instruções sobre como adicionar produtos, fazer pedidos, etc.
 
 ## Contribuição
 
